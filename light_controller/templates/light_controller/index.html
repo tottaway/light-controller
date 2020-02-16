@@ -12,13 +12,45 @@
             xhttp.open("GET", "{% url 'light_controller:set_lights' %}?mode=" + mode, true);
             xhttp.send();
         }
+
+        modes = {
+            0: {
+                "name": "off",
+                "background-color": "black",
+                "header-color": "white"
+            },
+            1: {
+                "name": "flame",
+                "background-color": "red",
+                "header-color": "blue"
+            },
+            0: {
+                "name": "gradient",
+                "background-color": "blue",
+                "header-color": "red"
+            }
+        };
+        mode_count = modes.keys().length();
+        current_mode = 0;
+        function toggle_lights() {
+            current_mode = (current_mode + 1) % 3;
+            set_lights(modes[current_mode]["name"]);
+            document.getElementById("main").style["background-color"] =
+                modes[current_mode]["background-color"];
+            document.getElementById("mode_header").style["color"] =
+                modes[current_mode]["header-color"];
+        }
     </script>
+    <style>
+        #main {
+            background-color: black;
+        }
+        #mode_header {
+            color: white
+        }
+    </style>
 </head>
-<body>
-    <span onclick="set_lights('flame')">Flame mode</span>
-    <br />
-    <span onclick="set_lights('gradient')">Gradient</span>
-    <br />
-    <span onclick="set_lights('off')">Off</span>
+<body onclick="toggle_lights" id="main">
+    <h1 id="mode_header">OFF</h1>
 </body>
 </html>
