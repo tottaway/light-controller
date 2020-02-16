@@ -1,7 +1,62 @@
 <html>
-  <head>
-  </head>
-  <body>
-    <h1>Hello, World</h1>
-  </body>
+<head>
+    <script>
+        modes = {
+            0: {
+                "name": "off",
+                "background-image": "linear-gradient(315deg, #aaaaaa 0%, #000000 74%)",
+                "header-color": "white"
+            },
+            1: {
+                "name": "flame",
+		"background-image": "linear-gradient(315deg, #d98324 0%, #a40606 74%)",
+                "header-color": "white"
+            },
+            2: {
+                "name": "gradient",
+                "background-image": "linear-gradient(315deg, #0000ff 0%, #ff0000 74%)",
+                "header-color": "white"
+            }
+        };
+        mode_count = Object.keys(modes).length;
+        current_mode = 0;
+
+        function set_lights(mode) {
+            var xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
+                   // Typical action to be performed when the document is ready:
+		    document.getElementById("main").style.backgroundImage =
+			modes[current_mode]["background-image"];
+		    document.getElementById("mode_header").style.color =
+			modes[current_mode]["header-color"];
+			}
+		    document.getElementById("mode_header").innerHTML =
+			modes[current_mode]["name"].toUpperCase();
+            };
+            xhttp.open("GET", "{% url 'light_controller:set_lights' %}?mode=" + mode, true);
+            xhttp.send();
+        }
+
+        function toggle_lights() {
+            current_mode = (current_mode + 1) % mode_count;
+	    console.log(current_mode);
+	    console.log(mode_count);
+            set_lights(modes[current_mode]["name"]);
+        }
+    </script>
+    <style>
+        #main {
+	    background-image: linear-gradient(315deg, #aaaaaa 0%, #000000 74%);
+            height: 100%;
+        }
+        #mode_header {
+            color: white
+        }
+    </style>
+</head>
+<body id="main" onclick="toggle_lights()">
+    <h1 id="mode_header">OFF</h1>
+    </div>
+</body>
 </html>
