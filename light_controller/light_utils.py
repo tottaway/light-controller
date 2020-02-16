@@ -45,11 +45,8 @@ def colorWipe(strip, color, wait_ms=50):
         strip.show()
         time.sleep(wait_ms/1000.0)
 
-flame_colors = []
-flame_color_maxs = (5, 200, 35)
-flame_color_mins = (0, 50, 0)
 # Define functions which animate LEDs in various ways.
-def flame(strip):
+def flame(strip, flame_colors, flame_color_maxs, flame_color_mins):
     """Wipe color across display a pixel at a time."""
 
     iter_brightness_change = random.randint(-3, 3)
@@ -94,44 +91,10 @@ def flame(strip):
         )
         strip.setPixelColor(i, color)
         strip.show()
-        #time.sleep(3/1000.0)
 
 def init_flame_arr():
-    for i in range(strip.numPixels()):
+    flame_colors = []
+    for _ in range(strip.numPixels()):
         flame_colors.append([10, 200, 30])
+    return flame_colors
 
-# Main program logic follows:
-if __name__ == '__main__':
-    # Process arguments
-    parser = argparse.ArgumentParser()
-    parser.add_argument('-nc', '--not-clear', action='store_true', help='clear the display on exit')
-    parser.add_argument('--candle', action='store_true', help='Candle type light')
-    parser.add_argument('--sodium', action='store_true', help='Candle type light')
-    parser.add_argument('--tn40', action='store_true', help='Tungsten 40W light')
-    parser.add_argument('--tn100', action='store_true', help='Tungsten 100W light')
-    parser.add_argument('--flame', action='store_true', help='Flickering warm colors')
-    args = parser.parse_args()
-
-    # Create NeoPixel object with appropriate configuration.
-    strip = Adafruit_NeoPixel(LED_COUNT, LED_PIN, LED_FREQ_HZ, LED_DMA, LED_INVERT, LED_BRIGHTNESS, LED_CHANNEL)
-    # Intialize the library (must be called once before other functions).
-    strip.begin()
-    try:
-        while True:
-            if args.candle:
-                colorWipe(strip, Color(31, 255, 107))  # Candle
-            elif args.tn40:
-                colorWipe(strip, Color(143, 255, 197))  # Tungsten 40W
-            elif args.tn100:
-                colorWipe(strip, Color(217, 255, 214))  # Tungsten 100W
-            elif args.sodium:
-                colorWipe(strip, Color(10, 255, 63))  # Sodium
-            elif args.flame:
-                init_flame_arr()
-                flame(strip)  # Flickering warm colors
-            else: 
-                warmCycle(strip, wait_ms=20)
-
-    except KeyboardInterrupt:
-        if not args.not_clear:
-            colorWipe(strip, Color(0,0,0), 10)
