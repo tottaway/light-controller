@@ -9,13 +9,16 @@
                    document.getElementById("demo").innerHTML = xhttp.responseText;
                 }
             };
-            xhttp.open("GET", "{% url 'light_controller:set_lights' %}", true);
+            xhttp.open("GET", "{% url 'light_controller:set_lights' %}?mode=" + mode, true);
             xhttp.send();
         }
     </script>
 </head>
 <body>
-    <h1>Hello, World</h1>
-    <span onclick="set_lights('flame')">Turn lights on</span>
+    <span onclick="set_lights('flame')">Flame mode</span>
+    <br />
+    <span onclick="set_lights('gradient')">Gradient</span>
+    <br />
+    <span onclick="set_lights('off')">Off</span>
 </body>
 </html>

@@ -9,12 +9,19 @@ def index(request):
     return render(request, 'light_controller/index.html')
 
 def set_lights(request):
-    # TODO spawn and kill processes appropriately
+    mode = request.GET.get("mode", "off")
     if request.session['subprocess_pid'] != None:
-        os.killpg(os.getpgid(request.session['subprocess_pid']), signal.SIGTERM)
+        os.kill(request.session['subprocess_pid'], signal.SIGINT)
 
     print("runnning lights")
-    p = subprocess.Popen(['python', '/home/pi/rpi_ws281x/python/examples/custom_color.py', '--flame'])
-    request.session['subprocess_pid'] = p.pid
+    if mode == "flame":
+        p = subprocess.Popen(['python', '/home/pi/rpi_ws281x/python/examples/custom_color.py', '--flame'])
+        request.session['subprocess_pid'] = p.pid
+    if mode == "gradient":
+        p = subprocess.Popen(['python', '/home/pi/rpi_ws281x/python/examples/strandtest.py'])
+        request.session['subprocess_pid'] = p.pid
+    elif mode == "off":
+        request.session['subprocess_pid'] = None
+
 
     return HttpResponse("Turned on lights")
