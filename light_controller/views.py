@@ -19,10 +19,10 @@ def set_lights(request):
     current_process = LightControllerProcess.objects.select_for_update().first()
 
     if current_process.pid != None:
-        os.kill(current_process.pid, signal.SIGINT)
-
-    current_process.pid = None
-    current_process.mode = "off"
+        try:
+            os.kill(current_process.pid, signal.SIGKILL)
+        except:
+            pass
 
     if mode == "flame":
         p = subprocess.Popen(['python', '/home/pi/rpi_ws281x/python/examples/custom_color.py', '--flame'])
@@ -32,6 +32,11 @@ def set_lights(request):
         p = subprocess.Popen(['python', '/home/pi/rpi_ws281x/python/examples/strandtest.py'])
         current_process.pid = p.pid
         current_process.mode = mode
+    else:
+        p = subprocess.Popen(['python', '/home/pi/rpi_ws281x/python/examples/custom_color.py', '--off'])
+        current_process.pid = None
+        current_process.mode = "off"
+
 
     current_process.save()
 
